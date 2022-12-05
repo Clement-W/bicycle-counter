@@ -338,7 +338,7 @@ We created a hugging face space in order to allow everyone play, and see the res
 
 ## Smaller model
 
-For a comparison point we trained a second model on the same data set. We chose to use the SSD MobileNet v2 320x320 which can be found [here](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md). In order for it to run make the follwing changes:
+We also trained a second model on the same data set. We chose to use the SSD MobileNet v2 320x320 which can be found [here](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md). In order for it to be trained make the follwing changes:
 -In pipeline.config, copy all the previously made changes and change fine_tune_checkpoint to ```pre-trained-models/ssd_mobilenet_v2_320x320_coco17_tpu-8/checkpoint/ckpt-0``` 
 -When running the commands for evaluation, training, and monitoring change the folder directory to ```ssd_mobilenet_v2_320x320_coco17_tpu-8``` instead of ```efficientdet_d1_v1_test```.
 After these changes the process is identical to the one used for the main model.
