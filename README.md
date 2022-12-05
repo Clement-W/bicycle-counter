@@ -432,22 +432,22 @@ The results of the evaluation of the 3 set of data can be seen online on the [as
 
 Here are the obtained losses on the 3 sets:
 
-|           	| Classification loss 	| Localization loss 	| Total loss 	|
-|-----------	|:-------------------:	|:-----------------:	|------------	|
-| Test set  	| 0.223413            	| 0.003314          	| 0.264104   	|
-| Train set 	| 0.181020            	| 0.003023          	| 0.221419   	|
-| Test set  	| 0.197278            	| 0.003231          	| 0.237886   	|
+| 	                 | Classification loss 	| Localization loss 	| Total loss 	|
+|-------------------|:-------------------:	|:-----------------:	|------------	|
+| Test set  	       | 0.223413            	| 0.003314          	| 0.264104   	|
+| Train set 	       | 0.181020            	| 0.003023          	| 0.221419   	|
+| Validation set  	 | 0.197278            	| 0.003231          	| 0.237886   	|
 
 <br/>
 <div style='text-align:center'> <b>Table 2</b>: Loss obtained on the 3 sets </div>
 
 Here are 3 of the performance metrics obtained on the 3 sets:
 
-|           	| mAP@.50IOU 	| map@.75IOU 	|  AR@100  	|
-|-----------	|:----------:	|------------	|:--------:	|
-| Test set  	| 0.823290   	| 0.649656   	| 0.658216 	|
-| Train set 	| 0.840275   	| 0.676805   	| 0.672312 	|
-| Test set  	| 0.826129   	| 0.655632   	| 0.662531 	|
+| 	                 | mAP@.50IOU 	| map@.75IOU 	|  AR@100  	|
+|-------------------|:----------:	|------------	|:--------:	|
+| Test set  	       | 0.823290   	| 0.649656   	| 0.658216 	|
+| Train set 	       | 0.840275   	| 0.676805   	| 0.672312 	|
+| Validation set  	 | 0.826129   	| 0.655632   	| 0.662531 	|
 
 <br/>
 <div style='text-align:center'> <b>Table 3</b>: mAP and AR obtained on the 3 sets </div>
@@ -455,7 +455,61 @@ Here are 3 of the performance metrics obtained on the 3 sets:
 
 ## Training and evaluation of the second model
 
-TODO (not as detailled as the main model)
+All of the data from tensorboard used in this section can found [here](https://tensorboard.dev/experiment/5kFy2VUWSR2Gs7nFlowdUw/#scalars).
+
+<!-- #region -->
+### Learning rate decay
+
+This model was trained for 2 hours and 40 minutes. Once again the training was automatically stopped due to the cosine decay. Thanks to tensorboard, we can see how the learning rate has changed over the training with respect to the number of steps
+
+|                    By number of steps                                  	                     |
+|:--------------------------------------------------------------------------------------------:|
+| <img src="markdown-images/lr-steps-small.png" alt="lr w.r.t steps" style="height: 200px"/> 	 |
+
+<br/>
+<div style='text-align:center'> <b>Figure 7</b>: Plot of the learning rate versus the number of steps for the second model </div>
+
+
+We notice that at some point, the learning rate is equal to zero, which is when the model stops.
+
+### Monitoring the loss
+
+Here are the 3 most relevant loss that we can analyze. The loss on the training set in orange, and the loss on the validation set is blue:
+
+|                          Classification loss                                              	                           |                          Localization loss                                             	                          |                        Total loss                                         	                         |
+|:---------------------------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------:|
+| <img src="markdown-images/classification-loss-small.png" alt="graph of classification loss" style="height: 200px"/> 	 | <img src="markdown-images/localization-loss-small.png" alt="graph of localization loss" style="height: 200px"/> 	 | <img src="markdown-images/total-loss-small.png" alt="graph of total loss" style="height: 200px"/> 	 |
+
+<br/>
+<div style='text-align:center'> <b>Figure 8</b>: Plot of the 3 main loss curves versus the number of step for the small model</div>
+
+
+The above curves are slightly smoothed in order to make it easier to distinguish the overall tendancy of the loss curves, but the actual curve is also displayed on the same graph with a low opacity.
+<!-- #endregion -->
+
+## Final evaluation of the smaller model
+
+The results of the evaluation of the test and validation sets of data can be seen online on the [associated tensorboard](https://tensorboard.dev/experiment/5kFy2VUWSR2Gs7nFlowdUw/#scalars).
+
+Here are the obtained losses on the 2 sets:
+
+| 	                 | Classification loss 	 | Localization loss 	 | Total loss 	 |
+|-------------------|:---------------------:|:-------------------:|--------------|
+| Validation set  	 |  0.4847            	  |  0.692          	   | 1.306   	    |
+| Test set  	       |  0.4542            	  |  0.6987          	  | 1.28   	     |
+
+<br/>
+<div style='text-align:center'> <b>Table 4</b>: Loss obtained on the 2 sets for the smaller model</div>
+
+Here are 3 of the performance metrics obtained on the 2 sets:
+
+| 	                 | mAP@.50IOU 	 | map@.75IOU 	 | AR@100  	 |
+|-------------------|:------------:|--------------|:---------:|
+| Validation set  	 |  0.3581   	  | 0.01971   	  | 0.2604 	  |
+| Test set  	       |  0.3536   	  | 0.01668   	  | 0.2707 	  |
+
+<br/>
+<div style='text-align:center'> <b>Table 5</b>: mAP and AR obtained on the 2 sets  for the smaller model</div>
 
 <!-- #region -->
 ## Inference with the main model
@@ -568,7 +622,24 @@ Now let's focus on 3 performance metrics showed in **Table 3**. The results are 
 
 ## Comparison with the second model
 
-TODO
+The numbers used for both of the models can be found [here](https://tensorboard.dev/experiment/dTD0vaI3SdyRZYI4WLHRbg/#scalars&runSelectionState=eyJldmFsIjpmYWxzZSwidGVzdCI6dHJ1ZSwidHJhaW5pbmciOmZhbHNlLCJ2YWxpZGF0aW9uIjpmYWxzZX0%3D) and [here](https://tensorboard.dev/experiment/5kFy2VUWSR2Gs7nFlowdUw/#scalars&runSelectionState=eyJldmFsIjpmYWxzZSwidGVzdCI6dHJ1ZSwidHJhaW4iOmZhbHNlfQ%3D%3D).
+
+| 	                        | Total Loss 	  |   mAP@.50IOU 	    | mAP@.75IOU 	 | Recall/AR@100 |
+|--------------------------|:-------------:|:-----------------:|:------------:|:--------------|
+| EfficientDet D1 V1 	     |    0.2641	    | 0.8233          	 |  0.6497   	  | 0.6582        |
+| Mobile Net v2 320x320  	 | 1.28        	 | 0.3536          	 | 0.01668   	  | 0.1653        |
+
+<br/>
+<div style='text-align:center'> <b>Table 6</b>: Total Loss, mAP, and Recall for both models</div>
+
+As you can see from the table above the second model has much higher total loss compared with the first, nearly 6 times as much.
+This makes sense as the second model is a much smaller one and was trained for less time.
+
+The precision of the second model is also much lower than the first model across the board randing from the largest difference, that of mAP@.75IOT with the second model being about 1/40 the first, and the smallest difference being mAP@.50IOU with the second being about 1/3 of the first.
+
+Recall follows a similiar trend to the other metrics above with the second model having about 1/4 the recall of the first.
+
+Overall the first model exhibits much better performace compared to the second model at the cost of much greater training time which in our case was worth it for the much greater performance of the model
 
 
 # Conclusion
