@@ -1,4 +1,5 @@
-<h1 style=text-align:center> Cyclists Counter - ECS171 Final Project </h1>
+<h1 style=text-align:center> Cyclists Counter - ECS171 Final Project <br> <a href="https://clement-w.github.io/cyclists-counter/">Test the model here</a> </h1>
+
 
 
 Clément Weinreich - Timothy Blanton - Sohan Patil - Dave Ru Han Wang
@@ -6,54 +7,61 @@ Clément Weinreich - Timothy Blanton - Sohan Patil - Dave Ru Han Wang
 
 # Introduction
 
-Introduction of your project. Why chosen? why is it cool? General/Broader impact of having a good predictive mode. i.e. why is this important?
+The goal of our project is to address the problem of adapting infrastructure to cyclist flows. In general, it is difficult to estimate the number of bicycle parking spaces needed for different areas and buildings. We therefore want to create an automatic detector and counter of cyclists, working on a Jetson Nano. Once our project is completed, it would be possible to capture data about the flow of cyclists at different locations, and use this data to make predictions or estimates of cyclist flows. A good predictive model would allow cities or universities to better adapt their infrastructure to the needs of cyclists. For a bicycle-first campus like UC Davis, knowing the flux of cyclists according to different areas on campus is very important for the safety of the students. To complete this project, we used transfer-learning on the pre-trained object detection model [EfficientDet-D1](https://arxiv.org/abs/1911.09070). The main model has been trained for 2 days on an NVIDIA 3060TI which led to a very efficient model in various situations. The images used to train the model come from the [Cyclist Dataset for Object Recognition](https://www.kaggle.com/datasets/semiemptyglass/cyclist-dataset) published by [1] in 2016. **REMOVE IF NOT: Then, we implemented an algorithmic-based tracking system that allow us to count the number of cyclists detected on a video flux.**
+
+To test our model, you can send your images or urls to the gradio demo accessible [here](https://clement-w.github.io/cyclists-counter/). This demo is also available in [Hugging Face Spaces](https://huggingface.co/spaces/clement-w/cyclists-detection).
 
 
 # Methods
 
 All the work that have been done for this project is reproductible. To download our dataset and install the required softwares and libraries, you can follow the instructions in [Setup-requirements](#Setup-requirements).
 
-
+<!-- #region -->
 ## Data Exploration
 
 The data exploration step is split into 2 notebooks:
-- [adapt_dataset.ipynb](adapt_dataset.ipynb): Adapt the original dataset and make it usable for our project.
+
+- [adapt_dataset.ipynb](adapt_dataset.ipynb): Adapt the original dataset and make it usable for our project
 - [data_exploration.ipynb](data_exploration.ipynb): Exploration of the dataset
+
 
 ###  [Adapt Dataset notebook](adapt_dataset.ipynb)
 
-This first notebook contains the steps to adapt the original dataset ([Cyclist Dataset for Object Recognition](https://www.kaggle.com/datasets/semiemptyglass/cyclist-dataset)), and make it usable for our project. The original dataset contains 13674 images, and the labels consist of .txt files containing the class id followed by the coordinates : `id center_x center_y width height`. Thus, deleted the non-labeled images along with their empty label file. Thanks to the python library `pylabel`, we loaded the dataset into an object  This library was useful in particular to convert the label format from Yolov5 (.txt) to VOC XML (the required label format of tensorflow object detection API). After converting the lables, we removed the `.txt` labels and keept the new `.xml` labels. Then, we used a script from the tensorflow object detection API to split our dataset into 3 sets : 
-* 90% for the train set (9760 images)
-* 10% for the test set (1206 images)
-* 10% of the 90% train set for the validation set (1085 images)
+The original dataset used is the ([Cyclist Dataset for Object Recognition](https://www.kaggle.com/datasets/semiemptyglass/cyclist-dataset)), recorded from a moving vehicle in the urban traffic of Beijing.
+This first notebook contains the steps to adapt the original dataset, and make it usable for our project. This dataset contains 13674 images, and the labels consist of .txt files containing the class id followed by the coordinates : `id center_x center_y width height`. Thus, deleted the non-labeled images along with their empty label file. Thanks to the python library `pylabel`, we loaded the dataset into an object  This library was useful in particular to convert the label format from Yolov5 (.txt) to VOC XML (the required label format of tensorflow object detection API). After converting the lables, we removed the `.txt` labels and keept the new `.xml` labels. Then, we used a script from the tensorflow object detection API to split our dataset into 3 sets : 
+
+- 90% for the train set (9760 images)
+- 10% for the test set (1206 images)
+- 10% of the 90% train set for the validation set (1085 images)
 
 All these manipulations necessited to manage folders and files with command lines. To run this notebook, you must download the original dataset from kaggle before (see in the notebook). With the current state of the github repository, the notebook can't be run anymore. Before executing this notebook, the main folder looked like this:
 
-* `images/` contains 13 674  images
-* `labels/` contains 13 674 .txt files (yolo bounding box format) with this format `id center_x center_y width height`
+- `images/` contains 13 674  images
+- `labels/` contains 13 674 .txt files (yolo bounding box format) with this format `id center_x center_y width height`
 
 After running this notebook the main folder looked like this:
 
-* `adapt_dataset.ipynb` this jupyter notebook
-* `tensorflow-scripts/` contains the scripts from tensorflow
-    * `partition_dataset.py` python script to split a folder of images with labels into 2 subfolders train and test
-* `images/` contains the data
-    * `train/` contains 9760 images and labels of the train set 
-    * `test/` contains 1206 images and labels of the test set
-    * `validation/` contains 1085 images and labels of the validation set
+- `adapt_dataset.ipynb` this jupyter notebook
+- `tensorflow-scripts/` contains the scripts from tensorflow
+    - `partition_dataset.py` python script to split a folder of images with labels into 2 subfolders train and test
+- `images/` contains the data
+    - `train/` contains 9760 images and labels of the train set 
+    - `test/` contains 1206 images and labels of the test set
+    - `validation/` contains 1085 images and labels of the validation set
     
 To download the new version of the dataset, you can also directly follow the steps in [Setup-requirements](#Setup-requirements). 
 
 ### [Data Exploration notebook](data_exploration.ipynb)
 
 This notebook contains all the work done to explore the dataset. In this notebook, we:
-* Load the dataset as a pandas dataframe thanks to the pylabel library
-* Analyze the the number of images, of bounding boxes
-* Analyze the image size
-* Analyze some statistics (mean,std,quantiles,min,max) about the repartitions of the bounding boxes
-* Visualize some samples from train,test and validation set with the bounding boxes.
-* Analyze the size and the repartition of small/medium/large bouding boxes in the dataset (based on the sizes used by the COCO standard metrics)
 
+- Load the dataset as a pandas dataframe thanks to the pylabel library
+- Analyze the the number of images, of bounding boxes
+- Analyze the image size
+- Analyze some statistics (mean,std,quantiles,min,max) about the repartitions of the bounding boxes
+- Visualize some samples from train,test and validation set with the bounding boxes.
+- Analyze the size and the repartition of small/medium/large bouding boxes in the dataset (based on the sizes used by the COCO standard metrics)
+<!-- #endregion -->
 
 ## Data Preprocessing
 
@@ -64,9 +72,10 @@ Now that the dataset has been prepared to be compatible with our project, and th
 The Tensorflow 2 Object Detection API allows to do data preprocessing and data augmentation in the training pipeline configuration. As stated in their [docs](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/configuring_jobs.md#configuring-the-trainer), all the preprocessing of the input is done in the `train_config` part of the training configuration file. The training configuration file is explained in the section [Configure the training pipeline](#TODODODODOOODODODODODOO) of this README.md. 
 
 So here, the important part of the configuration file is `train_config` which parametrize:
-* Model parameter initialization
-* Input Preprocessing
-* SGD parameters
+
+- Model parameter initialization
+- Input Preprocessing
+- SGD parameters
 
 Thus, we focus on the Input Preprocessing part of the config file. All this preprocessing is included in the `data_augmentation_options` tag of the `train_config`. This data_augmentation_options can take several values that are listed [here](https://github.com/tensorflow/models/blob/master/research/object_detection/protos/preprocessor.proto). And [this file](https://github.com/tensorflow/models/blob/master/research/object_detection/builders/preprocessor_builder_test.py) also explains how to write them into the config file. 
 
@@ -77,9 +86,10 @@ Concerning the image size, most of the object detection model contains an  [imag
 The pipeline that specify the data augmentation options that will be applied to the images is created in this notebook: [configure_training_pipeline.ipynb](configure_training_pipeline.ipynb).
 
 Data augmentation englobe techniques used to increase the amount of data, by adding to the dataset slightly modified copies of already existing data. Data augmentation helps to reduce overfitting by helping the network to generalize over different examples. This is closely related to oversampling. It is important to note that all the data augmentation options will be applied on the images, before entering the resize layer. Here, we used 3 different methods to augment our data:
-* **random_scale_crop_and_pad_to_square**: Randomly scale, crop, and then pad the images to fixed square dimensions. The method sample a random_scale factor from a uniform distribution between scale_min and scale_max, and then resizes the image such that its maximum dimension is (output_size * random_scale). Then a square output_size crop is extracted from the resized image. Lastly, the cropped region is padded to the desired square output_size (which is the input size of the network) by filling the empty values with zeros.
-* **random_horizontal_flip**: Randomly flips the image and detections horizontally, with a probability p. Here we chose p=0.3, so the probability that an image is horizontally flipped is 30%.
-* **random_distort_color**: Randomly distorts color in images using a combination of brightness, hue, contrast and saturation changes. By using the parameter `color_ordering=1`, the sequence of adjustment performed is :
+
+- **random_scale_crop_and_pad_to_square**: Randomly scale, crop, and then pad the images to fixed square dimensions. The method sample a random_scale factor from a uniform distribution between scale_min and scale_max, and then resizes the image such that its maximum dimension is (output_size * random_scale). Then a square output_size crop is extracted from the resized image. Lastly, the cropped region is padded to the desired square output_size (which is the input size of the network) by filling the empty values with zeros.
+- **random_horizontal_flip**: Randomly flips the image and detections horizontally, with a probability p. Here we chose p=0.3, so the probability that an image is horizontally flipped is 30%.
+- **random_distort_color**: Randomly distorts color in images using a combination of brightness, hue, contrast and saturation changes. By using the parameter `color_ordering=1`, the sequence of adjustment performed is :
   1. randomly adjusting brightness
   2. randomly adjusting contrast
   3. randomly adjusting saturation 
@@ -120,20 +130,21 @@ To follow this part, we assume you installed the required libraries to train an 
 
 To train our object detection model, we followed the [documentation](https://tensorflow-object-detection-api-tutorial.readthedocs.io/en/latest/training.html) of the Tensorflow2 Object Detection API. Thus, we organized the training workspace `training-workspace` the same way as it is recommended:
 
-* **annotations**: This folder is used to store all the TensorFlow *.record files, which contains the list of annotations for our dataset images.
+- **annotations**: This folder is used to store all the TensorFlow *.record files, which contains the list of annotations for our dataset images.
 
-* **exported-models**: This folder is used to store exported versions of our trained model(s).
+- **exported-models**: This folder is used to store exported versions of our trained model(s).
 
-* **models**: This folder contains a sub-folder for each of the training job. Each subfolder contains the training pipeline configuration file `pipeline.config`, as well as all files generated during the training and evaluation of our model (checkpoints, tfevents, etc.).
+- **models**: This folder contains a sub-folder for each of the training job. Each subfolder contains the training pipeline configuration file `pipeline.config`, as well as all files generated during the training and evaluation of our model (checkpoints, tfevents, etc.).
 
-* **pre-trained-models**: This folder contains the downloaded pre-trained models, which shall be used as a starting checkpoint for our training jobs.
+- **pre-trained-models**: This folder contains the downloaded pre-trained models, which shall be used as a starting checkpoint for our training jobs.
 
 #### Generate .record files [(generate_tfrecords.ipynb)](generate_tfrecords.ipynb)
 
 The Tensolfow API use what we call tf record files to store the data. It is a simple format that contains both the images and the labels in one file. To generate these files, we followed the documentation. The instructions are explained in the notebook generate_tfrecords.ipynb. In the end, this adds 3 new files to the folder `training-workspace/annotations`:
-* `train.record`: the train set
-* `validation.record`: the validation set
-* `test.record`: the test set
+
+- `train.record`: the train set
+- `validation.record`: the validation set
+- `test.record`: the test set
 
 The .record files are associated to a `label_map` file which tells the classes that must be classified in the dataset. Here we only want to classify the cyclists, so the label map is very simple:
 ```py
@@ -165,11 +176,12 @@ The TensorFlow Object Detection API uses protobuf files to configure the trainin
 To redefine the training configuration through the file `pipeline.config`, we created the directory `efficientdet_d1_v1` into `training-workspace/models`. Then, we copied the configuration file into this directory in order to modify it, while keeping the original configuration file in the folder `training-workspace/pre-trained-models/efficientdet_d1_coco17_tpu-32`. 
 
 We described every changes done to the configuration file in the notebook, but here are the main changes:
-* Changed the number of class to detect
-* Changed the batch size
-* Added some data augmentation options (see [Data-Augmentation](#Data-Augmentation)) 
-* Changed the learning rate
-* Changed the paths of the checkpoints and the dataset
+
+- Changed the number of class to detect
+- Changed the batch size
+- Added some data augmentation options (see [Data-Augmentation](#Data-Augmentation)) 
+- Changed the learning rate
+- Changed the paths of the checkpoints and the dataset
 
 Some parameters have not been changed, but remains important to mention, like the learning rate decay scheduler. In order to lower the learning rate as the training progresses, we used a cosine decay schedule. This schedule applies a cosine decay function to an optimizer step, given a provided initial learning rate. 
 
@@ -184,12 +196,13 @@ The model was trained for 2 days (50 hours) on a NVIDIA 3060TI.
 #### Launch training and periodic evaluation
 
 To train the model, and include a periodic evaluation of the model with the validation set, 2 terminal are required:
-* Train the model in the first terminal with
+
+- Train the model in the first terminal with
 ```sh
 cd training-workspace
 python ../tensorflow-scripts/model_main_tf2.py --model_dir=models/efficientdet_d1_v1 --pipeline_config_path=models/efficientdet_d1_v1/pipeline.config
 ```
-* Launch periodic evaluation in the other terminal with
+- Launch periodic evaluation in the other terminal with
 ```sh
 cd training-workspace
 python ../tensorflow-scripts/model_main_tf2.py --model_dir=models/efficientdet_d1_v1 --pipeline_config_path=models/efficientdet_d1_v1/pipeline.config --checkpoint_dir=models/efficientdet_d1_v1
@@ -198,13 +211,13 @@ python ../tensorflow-scripts/model_main_tf2.py --model_dir=models/efficientdet_d
 The model was trained for 2 days (50 hours) on a NVIDIA 3060TI. If you want to access the model directory which contains all the training checkpoints, the evaluation reports (as .tfevents files), you can download the folder `efficientdet_d1_v1`, and replace the current folder `training-workspace/models/efficientdet_d1_v1` by the new one. To download it:
 
 
-* Download the efficientdet_d1_v1 folder :
+- Download the efficientdet_d1_v1 folder :
 ```
 wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1ClnmwtBJbP6FIJNP2WWV8ZwfgWxiPFxX' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1ClnmwtBJbP6FIJNP2WWV8ZwfgWxiPFxX" -O efficientdet_d1_v1.zip && rm -rf /tmp/cookies.txt
 ```
 It can also be download manually [here](https://drive.google.com/file/d/1ClnmwtBJbP6FIJNP2WWV8ZwfgWxiPFxX/view?usp=sharing).
 
-* Unzip and delete the zip file :
+- Unzip and delete the zip file :
 ```
 unzip efficientdet_d1_v1.zip
 rm efficientdet_d1_v1.zip
@@ -228,10 +241,10 @@ You should then be able to review all the information of the training, including
 
 As we are training an object detector, there is 4 loss that we need to take into account:
 
-* The classification loss: Is the cyclists well classified as cyclists
-* The localization loss: Is the bounding boxes close to the cyclists
-* The regularization loss: Aims to keep the model parameters as small as possible
-* The total loss: Sum of the classification, localization, and regularization loss.
+- The classification loss: Is the cyclists well classified as cyclists
+- The localization loss: Is the bounding boxes close to the cyclists
+- The regularization loss: Aims to keep the model parameters as small as possible
+- The total loss: Sum of the classification, localization, and regularization loss.
 
 #### Focus on the performance metrics used
 
@@ -242,20 +255,21 @@ To compute the mAP, we first need to compute the precision and recall of detecti
 Then we also use the AR (Average Recall), which consist of averaging the recall at IoU thresholds from 0.5 to 1, and thus summarize the distribution of recall across a range of IoU thresholds. So we can plot the recall values for each IoU threshold between 0.5 and 1. Then, the average recall describes the area doubled under the recall-IoU curve. Similarly to mAP, the mAR take the mean of the AR for every class. So the mAR is here equivalent to the AR.
 
 We can monitor these metrics in tensorboard and have an insight of the model's performance according to different cases. For the average precision we measured:
-* The mAP at IoU varying from 0.5 to 0.95 (coco challenge metric) -> named mAP in tensorboard
-* The mAP at IoU = 0.5 (PASCAL VOC challenge metric) -> named mAP@.50IOU in tensorboard
-* The mAP at IoU = 0.75 (strict metric) -> named mAP@.75IOU in tensorboard
-* The mAP for small objects (area < $32^2$) -> named mAP(small) in tensorboard
-* The mAP for medium objects ( $32^2$ < area < $96^2$) -> named mAP(medium) in tensorboard
-* The mAP for large objects (area > $96^2$) -> named mAP(large) in tensorboard
+
+- The mAP at IoU varying from 0.5 to 0.95 (coco challenge metric) -> named mAP in tensorboard
+- The mAP at IoU = 0.5 (PASCAL VOC challenge metric) -> named mAP@.50IOU in tensorboard
+- The mAP at IoU = 0.75 (strict metric) -> named mAP@.75IOU in tensorboard
+- The mAP for small objects (area < $32^2$) -> named mAP(small) in tensorboard
+- The mAP for medium objects ( $32^2$ < area < $96^2$) -> named mAP(medium) in tensorboard
+- The mAP for large objects (area > $96^2$) -> named mAP(large) in tensorboard
 
 For the average recall we measured:
-* The AR given images with 1 detection maximum -> named AR@1 in tensorboard
-* The AR given images with 10 detection maximum -> named AR@10 in tensorboard
-* The AR given images with 100 detection maximum -> named AR@100 in tensorboard
-* The AR for small objects (area < $32^2$) -> named AR@100(small) in tensorboard
-* The AR for medium objects ( $32^2$ < area < $96^2$) -> named AR@100(medium) in tensorboard
-* The AR for large objects (area > $96^2$) -> named AR@100(large) in tensorboard
+- The AR given images with 1 detection maximum -> named AR@1 in tensorboard
+- The AR given images with 10 detection maximum -> named AR@10 in tensorboard
+- The AR given images with 100 detection maximum -> named AR@100 in tensorboard
+- The AR for small objects (area < $32^2$) -> named AR@100(small) in tensorboard
+- The AR for medium objects ( $32^2$ < area < $96^2$) -> named AR@100(medium) in tensorboard
+- The AR for large objects (area > $96^2$) -> named AR@100(large) in tensorboard
 
 <!-- #region -->
 ### Evaluate the final model
@@ -287,13 +301,13 @@ To do the conversion of the results from `*.tfevents` into a pandas dataframe, w
 
 If you want to download the folder `efficientdet_d1_v1_test` which contains the evaluations results as .tfevents files, you can do it by following these steps:
 
-* Download the `efficientdet_d1_v1_test` folder :
+- Download the `efficientdet_d1_v1_test` folder :
 ```
 wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1Q_usxj2k0waHw4-6epKXPxcdn_GG3D1f' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1Q_usxj2k0waHw4-6epKXPxcdn_GG3D1f" -O efficientdet_d1_v1_test.zip && rm -rf /tmp/cookies.txt
 ```
 It can also be download manually [here](https://drive.google.com/file/d/1Q_usxj2k0waHw4-6epKXPxcdn_GG3D1f/view?usp=sharing).
 
-* Unzip, delete the zip file, and move the folder at its proper emplacement :
+- Unzip, delete the zip file, and move the folder at its proper emplacement :
 ```
 unzip efficientdet_d1_v1_test.zip
 rm efficientdet_d1_v1_test.zip
@@ -311,13 +325,13 @@ Now, we can use this model to perform inference.
 
 If you want to download the exported model, you can do it that way:
 
-* Download the my_model folder :
+- Download the my_model folder :
 ```
 wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1BWaKL_VMOQ89Nuw5NEdRUv4Jl6GP6trC' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1BWaKL_VMOQ89Nuw5NEdRUv4Jl6GP6trC" -O my_model.zip && rm -rf /tmp/cookies.txt
 ```
 It can also be download manually [here](https://drive.google.com/file/d/1BWaKL_VMOQ89Nuw5NEdRUv4Jl6GP6trC/view?usp=sharing).
 
-* Unzip, delete the zip file, and move the exported model at its proper place :
+- Unzip, delete the zip file, and move the exported model at its proper place :
 ```
 unzip my_model.zip
 rm my_model.zip
@@ -333,7 +347,7 @@ TODO: describe the method (not the results)
 
 #### Inference in Hugging Face Spaces
 
-We created a hugging face space in order to allow everyone play, and see the results of our object detection model. You can access it on that link: [cyclists-detection](https://huggingface.co/spaces/clement-w/cyclists-detection). You can upload images by URL, or from your computer.
+We created a hugging face space in order to allow everyone play, and see the results of our object detection model. This demo works thanks to the library gradio. You can access it on that link: [cyclists-detection](https://huggingface.co/spaces/clement-w/cyclists-detection). You can upload images by URL, or from your computer. The gradio demo can also be accessed [here](https://clement-w.github.io/cyclists-counter/).
 
 
 ## Smaller model
@@ -558,11 +572,11 @@ As the images have a width of 2048 and a height of 1024, it was not feasable for
 
 Finally, all the data preprocessing that have been performed on the adapted dataset only consists of data augmentation:
 
-* We choosed to use the random scale,crop and pad to square data augmentation option because during the data exploration phase, we noticed that most of the cyclists were in the center of the image. Thus, to give different examples to the model, this data augmentation option will create other images where the cyclists won't be in the center of the image.
+- We choosed to use the random scale,crop and pad to square data augmentation option because during the data exploration phase, we noticed that most of the cyclists were in the center of the image. Thus, to give different examples to the model, this data augmentation option will create other images where the cyclists won't be in the center of the image.
 
-* We choosed to use the horizontal_flip data augmentation option because this will create more examples to train the network. As the cyclists can come from the left,right or front of the camera, this data augmentation option will help the network to see diverse cases of cyclist positions.
+- We choosed to use the horizontal_flip data augmentation option because this will create more examples to train the network. As the cyclists can come from the left,right or front of the camera, this data augmentation option will help the network to see diverse cases of cyclist positions.
 
-* We choosed to use the random_distort_color data augmentation option because during the data exploration phase, we noticed that the luminosity of the images are low, with a low contrast and a low saturation. Thus, this data augmentation option will help the network to see other examples with a different brightness, contrast, saturation and hue.
+- We choosed to use the random_distort_color data augmentation option because during the data exploration phase, we noticed that the luminosity of the images are low, with a low contrast and a low saturation. Thus, this data augmentation option will help the network to see other examples with a different brightness, contrast, saturation and hue.
 
 <!-- #region -->
 ## Preparation of the main model
@@ -585,9 +599,9 @@ As the batch size is very small, the loss is more subject to noise and vary a lo
 
 As you can see in low opacity, it is not so easy to discern the tendency of the loss curves. First, we can notice that in the 3 graphs, our training loss and validation loss are very close, so we can suppose that our model is not overfitting the training data. More particularly:
 
-* The classification loss is decreasing in both training and validation set, so we can suppose that letting the training continue would have helped the network to better learn to classify the cyclists.
-* The localization loss is very close to 0, and is close to be on a plateau. We can suppose that letting the training continue would have led to network to overfit the localization of the bounding boxes.
-* The total loss was of course deacreasing as it is the sum of the two loss above.
+- The classification loss is decreasing in both training and validation set, so we can suppose that letting the training continue would have helped the network to better learn to classify the cyclists.
+- The localization loss is very close to 0, and is close to be on a plateau. We can suppose that letting the training continue would have led to network to overfit the localization of the bounding boxes.
+- The total loss was of course deacreasing as it is the sum of the two loss above.
 
 Based on the error at each step, we can say that the model is fitting well the data from 50k steps, to the final step (300k). The fitting is still better on the last step as the loss is smaller. We can interpret these plots as seeing the complexity of the model and the error. Here, we can say that even though the model become more complex across the time, it is still fitting well the data. If we had more time to train the network, we could restart it on the last checkpoint, with a new base learning rate and see if the loss is still decreasing. This could maybe lead to better result, or cause overfitting. But this would probably mean to let the GPU run for 2 more days, which is costly in energy consumption. 
 
@@ -598,9 +612,10 @@ Let's start by discussing the mean average precision metrics, based on the resul
 Overall, the mAP is increasing no matter which value of IoU is used, or the size of the objects. The first plot show the COCO mAP (averaging on different values of IoU between 0.5 and 0.95), which is increasing but was starting to get on a plateau after 250k steps. We notice that the value of the mAP\@0.50IOU is larger than the value of the mAP\@0.75IOU, which is expected as 0.75 is a much more strict threshold. The mAP\@.75IOU on the last evaluation is approximately equal to 0.65, which is still very good.
 
 To analyze the mAP according to different size of bounding boxes, we can refer to the data exploration notebook which contains the distribution of the width, and height of the bounding boxes. To know the proportion of small, medium and large bounding boxes in our dataset, we modified the [data exploration notebook](data_exploration.ipynb). Thus, we know that our dataset contains:
-* 40% of small bounding boxes
-* 40% of medium bounding boxes
-* 20% of large bounding boxes
+
+- 40% of small bounding boxes
+- 40% of medium bounding boxes
+- 20% of large bounding boxes
 
 To better understand what small/medium/large means, we also displayed examples containing different size of bounding box. This really helps to understand and interpret the results.
 
@@ -644,7 +659,7 @@ Overall the first model exhibits much better performace compared to the second m
 
 # Conclusion
 
-TODO
+To conclude, we trained a custom cyclist detector model, which offers very good performances in various situations. It would have been interesting to re-train the model to see if the performances would have still increased, or if overfitting would have happened. As discussed previously, our evaluation of the model is biased because of memory leakage between the 3 sets. But testing the model manually with the gradio demo and images originating from different soures on the internet has shown very good results. To counteract the memory-leakage issue, we could have use the whole dataset for training, and find another dataset to constitute the validation and the test set. This would ensure that the data comes from different sources, which would lead to more reliable evaluation results. **TODO Continue with results of counting and jetson nano / or say that we did not have time for this**
 
 <!-- #region -->
 # Collaboration
@@ -652,37 +667,37 @@ TODO
 #### Clément Weinreich : Project Leader
 
 Contributions:
-* Project lead 
-* Adaptation of the dataset (code + write up)
-* Data exploration (code + write up)
-* Data preprocessing (code + write up)
-* Configuration of training job (code + write up)
-* Analysis of the training phase and results (write up)
-* Comments on model evaluation (write up)
-* Create demo with hugging face space (code + write up)
-* TODO ADD THINGS
+- Project lead 
+- Adaptation of the dataset (code + write up)
+- Data exploration (code + write up)
+- Data preprocessing (code + write up)
+- Configuration of training job (code + write up)
+- Analysis of the training phase and results (write up)
+- Comments on model evaluation (write up)
+- Create demo with gradio on hugging face space (code + write up)
+- Introduction and conclusion (write up)
 
 #### Timothy Blanton : Model trainer
 
 Contributions:
-* Trained the main model (code)
-* Trained the second model (code)
-* Evaluated the models (code)
-* Export of the main model (code)
-* TODO ADD THINGS
+- Trained the main model (code)
+- Trained the second model (code)
+- Evaluated the models (code)
+- Export of the main model (code)
+- TODO ADD THINGS
 
 
 #### Sohan Patil : Jetson Nanoer?
 
 Contributions:
-* Setup of the jetson nano
-* TODO ADD THINGS
+- Setup of the jetson nano
+- TODO ADD THINGS
 
 #### Dave Ru Han Wang : Coder? Counter?
 
 Contributions:
-* Data exploration (code)
-* TODO ADD THINGS
+- Data exploration (code)
+- TODO ADD THINGS
 <!-- #endregion -->
 
 # Extra-information
@@ -719,3 +734,10 @@ Now you're all set!
 ## Counting algorithm
 
 TODO: describe the method (not the results)
+
+
+# References
+
+[1] X. Li, F. Flohr, Y. Yang, H. Xiong, M. Braun, S. Pan, K. Li and D. M. Gavrila. A New Benchmark for Vision-Based Cyclist Detection. In Proc. of the IEEE Intelligent Vehicles Symposium (IV), Gothenburg, Sweden, pp.1028-1033, 2016.
+
+[2] Tan, Mingxing, and Quoc Le. "Efficientnet: Rethinking model scaling for convolutional neural networks." International conference on machine learning. PMLR, 2019.
