@@ -471,7 +471,7 @@ Here are 3 of the performance metrics obtained on the 3 sets:
 
 ## Training and evaluation of the second model
 
-All of the data from tensorboard used in this section can found [here](https://tensorboard.dev/experiment/5kFy2VUWSR2Gs7nFlowdUw/#scalars).
+All of the data from tensorboard used in this section can found [here](https://tensorboard.dev/experiment/a5SGQFqOQtKEEXGjrkLvOA/#scalars).
 
 <!-- #region -->
 ### Learning rate decay
@@ -505,28 +505,29 @@ The above curves are slightly smoothed in order to make it easier to distinguish
 
 ## Final evaluation of the smaller model
 
-The results of the evaluation of the test and validation sets of data can be seen online on the [associated tensorboard](https://tensorboard.dev/experiment/5kFy2VUWSR2Gs7nFlowdUw/#scalars).
+The results of the evaluation of the test and validation sets of data can be seen online on the [associated tensorboard](https://tensorboard.dev/experiment/a5SGQFqOQtKEEXGjrkLvOA/#scalars) as linked above.
 
-Here are the obtained losses on the 2 sets:
+Here are the obtained losses on the 3 sets:
 
 | 	                 | Classification loss 	 | Localization loss 	 | Total loss 	 |
 |-------------------|:---------------------:|:-------------------:|--------------|
-| Validation set  	 |  0.4847            	  |  0.692          	   | 1.306   	    |
+| Validation set  	 |  0.4802            	  |  0.6929          	  | 1.3   	      |
 | Test set  	       |  0.4542            	  |  0.6987          	  | 1.28   	     |
-  | Training Set      |        0.1924         |       0.2064        | 0.5257       |
+  | Train set         |         0.258         |       0.2442        | 0.6291       |
 
 <br/>
-<div style='text-align:center'> <b>Table 4</b>: Loss obtained on the 2 sets for the smaller model</div>
+<div style='text-align:center'> <b>Table 4</b>: Loss obtained on the 3 sets for the smaller model</div>
 
-Here are 3 of the performance metrics obtained on the 2 sets:
+Here are 3 of the performance metrics obtained on the 3 sets:
 
 | 	                 | mAP@.50IOU 	 | map@.75IOU 	 | AR@100  	 |
 |-------------------|:------------:|--------------|:---------:|
-| Validation set  	 |  0.3581   	  | 0.01971   	  | 0.2604 	  |
-| Test set  	       |  0.3536   	  | 0.01668   	  | 0.2707 	  |
+| Validation set  	 |  0.3563   	  | 0.01971   	  | 0.1641 	  |
+| Test set  	       |  0.3536   	  | 0.01668   	  | 0.1653 	  |
+| Train set         |    0.3679    | 0.01712      |  0.1722   |
 
 <br/>
-<div style='text-align:center'> <b>Table 5</b>: mAP and AR obtained on the 2 sets  for the smaller model</div>
+<div style='text-align:center'> <b>Table 5</b>: mAP and AR obtained on the 3 sets for the smaller model</div>
 
 <!-- #region -->
 ## Inference with the main model
@@ -640,7 +641,7 @@ Now let's focus on 3 performance metrics showed in **Table 3**. The results are 
 
 ## Comparison with the second model
 
-The numbers used for both of the models can be found [here](https://tensorboard.dev/experiment/dTD0vaI3SdyRZYI4WLHRbg/#scalars&runSelectionState=eyJldmFsIjpmYWxzZSwidGVzdCI6dHJ1ZSwidHJhaW5pbmciOmZhbHNlLCJ2YWxpZGF0aW9uIjpmYWxzZX0%3D) and [here](https://tensorboard.dev/experiment/5kFy2VUWSR2Gs7nFlowdUw/#scalars&runSelectionState=eyJldmFsIjpmYWxzZSwidGVzdCI6dHJ1ZSwidHJhaW4iOmZhbHNlfQ%3D%3D).
+The numbers used for both of the models can be found [here](https://tensorboard.dev/experiment/dTD0vaI3SdyRZYI4WLHRbg/#scalars&runSelectionState=eyJldmFsIjpmYWxzZSwidGVzdCI6dHJ1ZSwidHJhaW5pbmciOmZhbHNlLCJ2YWxpZGF0aW9uIjpmYWxzZX0%3D) and [here](https://tensorboard.dev/experiment/a5SGQFqOQtKEEXGjrkLvOA/#scalars&runSelectionState=eyJldmFsIjpmYWxzZSwidGVzdCI6dHJ1ZSwidHJhaW4iOmZhbHNlfQ%3D%3D).
 
 | 	                        | Total Loss 	  |   mAP@.50IOU 	    | mAP@.75IOU 	 | Recall/AR@100 |
 |--------------------------|:-------------:|:-----------------:|:------------:|:--------------|
@@ -648,7 +649,7 @@ The numbers used for both of the models can be found [here](https://tensorboard.
 | Mobile Net v2 320x320  	 | 1.28        	 | 0.3536          	 | 0.01668   	  | 0.1653        |
 
 <br/>
-<div style='text-align:center'> <b>Table 6</b>: Total Loss, mAP, and Recall for both models</div>
+<div style='text-align:center'> <b>Table 6</b>: Total Loss, mAP, and Recall for both models on the test set</div>
 
 As you can see from the table above the second model has much higher total loss compared with the first, nearly 6 times as much.
 This makes sense as the second model is a much smaller one and was trained for less time.
@@ -656,6 +657,8 @@ This makes sense as the second model is a much smaller one and was trained for l
 The average precision of the second model is also much lower than the first model across the board randing from the largest difference, that of mAP@.75IOU with the second model being about 1/40 the first, and the smallest difference being mAP@.50IOU with the second being about 1/3 of the first.
 
 The average recall follows a similiar trend to the other metrics above with the second model having about 1/4 the recall of the first.
+
+We can see the second model exhibits characters of not being fit correctly. We are unsure if it is underfitting or overfitting due to a lack of data. If we had let the model run for longer we would have a better idea of which one it is.
 
 Overall the first model exhibits much better performace compared to the second model at the cost of much greater training time which in our case was worth it for the much greater performance of the model.
 
