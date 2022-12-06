@@ -352,7 +352,9 @@ We created a hugging face space in order to allow everyone play, and see the res
 
 ## Smaller model
 
-We also trained a second model on the same data set. We chose to use the SSD MobileNet v2 320x320 which can be found [here](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md). In order for it to be trained make the follwing changes:
+We also trained a second model on the same data set. We chose to use the SSD MobileNet v2 320x320 which can be found [here](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md). This model consists of alternating layers of standard convolutional layers and depthwise convolutional layers. This is repeated several times until the size of the image is sufficiently small (less than 10 pixels) before it is sent through an average global pooling layer, flowed by a fully connected layer, and finally a softmax layer for classification.
+
+Tihs model was trained using the same data augmentation and training parameters as the first model except for the following changes:
 -In pipeline.config, copy all the previously made changes and change fine_tune_checkpoint to ```pre-trained-models/ssd_mobilenet_v2_320x320_coco17_tpu-8/checkpoint/ckpt-0``` 
 -When running the commands for evaluation, training, and monitoring change the folder directory to ```ssd_mobilenet_v2_320x320_coco17_tpu-8``` instead of ```efficientdet_d1_v1_test```.
 After these changes the process is identical to the one used for the main model.
@@ -488,7 +490,7 @@ We notice that at some point, the learning rate is equal to zero, which is when 
 
 ### Monitoring the loss
 
-Here are the 3 most relevant loss that we can analyze. The loss on the training set in orange, and the loss on the validation set is blue:
+Here are the 3 most relevant loss that we can analyze. The loss on the training set in red, and the loss on the validation set is orange:
 
 |                          Classification loss                                              	                           |                          Localization loss                                             	                          |                        Total loss                                         	                         |
 |:---------------------------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------:|
@@ -511,6 +513,7 @@ Here are the obtained losses on the 2 sets:
 |-------------------|:---------------------:|:-------------------:|--------------|
 | Validation set  	 |  0.4847            	  |  0.692          	   | 1.306   	    |
 | Test set  	       |  0.4542            	  |  0.6987          	  | 1.28   	     |
+  | Training Set      |        0.1924         |       0.2064        | 0.5257       |
 
 <br/>
 <div style='text-align:center'> <b>Table 4</b>: Loss obtained on the 2 sets for the smaller model</div>
@@ -650,11 +653,11 @@ The numbers used for both of the models can be found [here](https://tensorboard.
 As you can see from the table above the second model has much higher total loss compared with the first, nearly 6 times as much.
 This makes sense as the second model is a much smaller one and was trained for less time.
 
-The precision of the second model is also much lower than the first model across the board randing from the largest difference, that of mAP@.75IOT with the second model being about 1/40 the first, and the smallest difference being mAP@.50IOU with the second being about 1/3 of the first.
+The average precision of the second model is also much lower than the first model across the board randing from the largest difference, that of mAP@.75IOU with the second model being about 1/40 the first, and the smallest difference being mAP@.50IOU with the second being about 1/3 of the first.
 
-Recall follows a similiar trend to the other metrics above with the second model having about 1/4 the recall of the first.
+The average recall follows a similiar trend to the other metrics above with the second model having about 1/4 the recall of the first.
 
-Overall the first model exhibits much better performace compared to the second model at the cost of much greater training time which in our case was worth it for the much greater performance of the model
+Overall the first model exhibits much better performace compared to the second model at the cost of much greater training time which in our case was worth it for the much greater performance of the model.
 
 
 # Conclusion
