@@ -342,8 +342,11 @@ mv my_model training-workspace/exported-models/
 ### Inference with the model
 
 #### Inference on the Jetson Nano
+Our group had the Jetson Nano which could help us with inference. Our goal was to use the Jetson Nano to identify bicyclists passing through busy areas that would help us track the traffic and thereby offer some analysis and insight. Our Nano was set up using C270 HD Webcam by logitech. Our model training was done by our team and the Jetson Nano was only meant to be used for on-the-ground testing.
 
-TODO: describe the method (not the results)
+We came across issues with tensorflow and package versioning issues which affected our progress. The Jetson Nano had issues with Ubuntu and with the python version we were using which did not allow us to install tensorflow on the Jetson Nano.
+
+To tackle this issue, we have added a dashboard on our github repository that allows us to play and test different images under different backgrounds. This involves uploading an image taken and it returns bounding boxes to the bicyclists based on the prediction threshold we choose. This was created using the Hugging Face Spaces which we talk about in the next section.
 
 #### Inference in Hugging Face Spaces
 
@@ -544,8 +547,7 @@ TODO
 TODO
 
 ### Results on the Jetson Nano
-
-TODO
+We were not able to run the jetson nano due to lack of bicylists and issues with its set up.
 
 
 <!-- #endregion -->
@@ -693,11 +695,11 @@ Contributions:
 - TODO ADD THINGS
 
 
-#### Sohan Patil : Jetson Nanoer?
+#### Sohan Patil : Inference Set up
 
 Contributions:
 - Setup of the jetson nano
-- TODO ADD THINGS
+- Video Processing (code)
 
 #### Dave Ru Han Wang : Coder? Counter?
 
