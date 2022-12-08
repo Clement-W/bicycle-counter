@@ -351,6 +351,9 @@ We came across issues with tensorflow and package versioning issues which affect
 
 To tackle this issue, we have added a dashboard on our github repository that allows us to play and test different images under different backgrounds. This involves uploading an image taken and it returns bounding boxes to the bicyclists based on the prediction threshold we choose. This was created using the Hugging Face Spaces which we talk about in the next section.
 
+In our attempt to make inference run locally on our computers we decided to use Video2Inference.py and Imageinference.py to convert video input to independent images based on the fps value we had chosen. These images then go to the ImageInference.py file to form bounding boxes. If he had more time we would convert these images back to a video and make it seem like an animation. We used Google Colab to make it work.
+
+
 #### Inference in Hugging Face Spaces
 
 We created a hugging face space in order to allow everyone play, and see the results of our object detection model. This demo works thanks to the library gradio. You can access it on that link: [cyclists-detection](https://huggingface.co/spaces/clement-w/cyclists-detection). You can upload images by URL, or from your computer. The gradio demo can also be accessed [here](https://clement-w.github.io/cyclists-counter/).
