@@ -667,6 +667,15 @@ We can see the second model exhibits characters of not being fit correctly. We a
 
 Overall the first model exhibits much better performace compared to the second model at the cost of much greater training time which in our case was worth it for the much greater performance of the model.
 
+## Inference with the main model
+To do inferencing, we first need to convert the video into many frames. We have a separate video frame algorithm that does the following:
+1. Take the raw video as input data
+2. Within a for-loop, split the video into frames with frame rate fps = 0.1.
+3. Save an image only once per 10 frames to avoid too many similar images to a different directory.
+
+After that, we zip the image files and download locally (zip and unzip).
+
+Then, we upload the files again the ImageInference.ipynb, which will then be passed through a for-loop to simply infer one-by-one. As said before, we have employed different threshold values for deciding whether or not to draw the bounding boxes. This step holds true still and for more reliable results, we chose min_threshold = 0.1, because we do not believe at a lower threshold the model is overfitting. In fact, at min_threshold = 0.5, the model underperforms (undercounting the bicyclists).
 
 # Conclusion
 
@@ -750,10 +759,14 @@ Now you're all set!
 
 The counting algorithm is essential for counting number of unique bounding boxes at any given time on the screen. 
 
-This includes identifying the object and tracking till the object being tracked leaves the screen. Our approach for tracking was to calculate the centroid of each bounding box and to follow the centroid as it goes. For every pair of centroids, we calculate the euclidean distance between the two points. If the points are too close to each other we assume they are from the same bounding box or object ID. If the distance is high we assume it's a new bounding box and a new item has been detected. For each tracked centroid, we assign an object ID so we are aware of which bounding box has which ID. This allows us to know if the object has already been tracked or is currently being tracked. We keep track of direction and once the centroid leaves the screen, we consider that object as 1 count. 
-We apply the same algorithm for all the points that appear on the screen.
-Due to technical issues with the Jetson Nano, we were not able to test the counting algorithm to see how it works.
+This includes identifying the object and tracking till the object being tracked leaves the screen. Our approach for tracking was to calculate the centroid of each bounding box and to follow the centroid as it goes. For every pair of centroids, we calculate the euclidean distance between the two points. If the points are too close to each other we assume they are from the same bounding box or object ID. 
 
+If the distance is high we assume it's a new bounding box and a new item has been detected. For each tracked centroid, we assign an object ID so we are aware of which bounding box has which ID. 
+
+This allows us to know if the object has already been tracked or is currently being tracked. We keep track of direction and once the centroid leaves the screen, we consider that object as 1 count. 
+
+We apply the same algorithm for all the points that appear on the screen.
+Due to technical issues with the Jetson Nano, we were not able to test the counting algorithm to see how it works. But, all relevant code is there.
 
 # References
 
