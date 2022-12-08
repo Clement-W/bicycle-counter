@@ -7,7 +7,7 @@ Clément Weinreich - Timothy Blanton - Sohan Patil - Dave Ru Han Wang
 
 # Introduction
 
-Generally, it is difficult to estimate the number of bicycle parking spaces for different areas. Our project addresses cyclist flows. We wanted to create an automatic detector for cyclists (and in addition, if possible, a counter), with the help of a Jetson Nano. With our project, it would be possible make predictions or estimates of cyclist flow by capturing the flow of cyclists at different locations. A predictive model would allow cities and universities to better adapt their infrastructure to the needs of cyclists. For a bicycle-first campus like UC Davis, knowing the flux of cyclists according to different areas on campus is very important for the safety of the students.
+Generally, it is difficult to estimate the number of bicycle parking spaces for different areas. Our project addresses cyclist flows. We wanted to create an automatic detector for cyclists (and in addition, if possible, a counter), with the help of a Jetson Nano. With our project, it would be possible to make predictions or estimates of cyclist flow by capturing the flow of cyclists at different locations. A predictive model would allow cities and universities to better adapt their infrastructure to the needs of cyclists. For a bicycle-first campus like UC Davis, knowing the flux of cyclists according to different areas on campus is very important for the safety of the students.
 
 To complete this project, we used transfer-learning on a pre-trained object detection model [EfficientDet-D1](https://arxiv.org/abs/1911.09070). The main model was trained for 2 days on an NVIDIA 3060TI, leading to a very efficient model. The images training data come from the [Cyclist Dataset for Object Recognition](https://www.kaggle.com/datasets/semiemptyglass/cyclist-dataset) published by [1] in 2016. Then, an algorithmic-based tracking system that allow to count the number of cyclists was developed, but could not be teminated due to lack of time
 
@@ -31,13 +31,13 @@ The data exploration step is split into 2 notebooks:
 
 The original dataset used is the ([Cyclist Dataset for Object Recognition](https://www.kaggle.com/datasets/semiemptyglass/cyclist-dataset)), recorded from a moving vehicle in the urban traffic of Beijing.
 
-This first notebook contains the steps to adapt the original dataset, and make it usable for our project. This dataset contains 13674 images, and the labels consist of .txt files containing the class id followed by the coordinates : `id center_x center_y width height`. Thus, deleted the non-labeled images along with their empty label file. Thanks to the python library `pylabel`, we loaded the dataset into an object  This library was useful in particular to convert the label format from Yolov5 (.txt) to VOC XML (the required label format of tensorflow object detection API). After converting the lables, we removed the `.txt` labels and keept the new `.xml` labels. Then, we used a script from the tensorflow object detection API to split our dataset into 3 sets : 
+This first notebook contains the steps to adapt the original dataset, and make it usable for our project. This dataset contains 13674 images, and the labels consist of .txt files containing the class id followed by the coordinates : `id center_x center_y width height`. Thus, we deleted the non-labeled images along with their empty label file. Thanks to the python library `pylabel`, we loaded the dataset into an object. This library was useful in particular to convert the label format from Yolov5 (.txt) to VOC XML (the required label format of tensorflow object detection API). After converting the lables, we removed the `.txt` labels and keept the new `.xml` labels. Then, we used a script from the tensorflow object detection API to split our dataset into 3 sets : 
 
 - 90% for the train set (9760 images)
 - 10% for the test set (1206 images)
 - 10% of the 90% train set for the validation set (1085 images)
 
-All these manipulations necessited to manage folders and files with command lines. To run this notebook, you must download the original dataset from kaggle before (see in the notebook). With the current state of the github repository, the notebook can't be run anymore. Before executing this notebook, the main folder looked like this:
+All these manipulations necessitated the management of folders and files with command lines. To run this notebook, you must download the original dataset from kaggle before (see in the notebook). With the current state of the github repository, the notebook can't be run anymore. Before executing this notebook, the main folder looked like this:
 
 - `images/` contains 13 674  images
 - `labels/` contains 13 674 .txt files (yolo bounding box format) with this format `id center_x center_y width height`
@@ -59,7 +59,7 @@ To download the new version of the dataset, you can also directly follow the ste
 This notebook contains all the work done to explore the dataset. In this notebook, we:
 
 - Load the dataset as a pandas dataframe thanks to the pylabel library
-- Analyze the the number of images, of bounding boxes
+- Analyze the number of images and bounding boxes
 - Analyze the image size
 - Analyze some statistics (mean,std,quantiles,min,max) about the repartitions of the bounding boxes
 - Visualize some samples from train,test and validation set with the bounding boxes.
@@ -70,9 +70,9 @@ This notebook contains all the work done to explore the dataset. In this noteboo
 
 ### Data preprocessing with tensorflow 2 object detection API
 
-Now that the dataset has been prepared to be compatible with our project, and that we explored it a little bit more, we can focus at the data preprocessing we will setup in order to use the data during training.
+Now that the dataset has been prepared to be compatible with our project, and we explored it a little bit more, we can focus at the data preprocessing we will setup in order to use the data during training.
 
-The Tensorflow 2 Object Detection API allows to do data preprocessing and data augmentation in the training pipeline configuration. As stated in their [docs](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/configuring_jobs.md#configuring-the-trainer), all the preprocessing of the input is done in the `train_config` part of the training configuration file. The training configuration file is explained in the section [Configure the training pipeline](#Configure-the-training-pipeline-(configure_training_pipeline.ipynb)) of this README.md. 
+The Tensorflow 2 Object Detection API allows us to do data preprocessing and data augmentation in the training pipeline configuration. As stated in their [docs](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/configuring_jobs.md#configuring-the-trainer), all the preprocessing of the input is done in the `train_config` part of the training configuration file. The training configuration file is explained in the section [Configure the training pipeline](#Configure-the-training-pipeline-(configure_training_pipeline.ipynb)) of this README.md. 
 
 So here, the important part of the configuration file is `train_config` which parametrize:
 
@@ -80,7 +80,7 @@ So here, the important part of the configuration file is `train_config` which pa
 - Input Preprocessing
 - SGD parameters
 
-Thus, we focus on the Input Preprocessing part of the config file. All this preprocessing is included in the `data_augmentation_options` tag of the `train_config`. This data_augmentation_options can take several values that are listed [here](https://github.com/tensorflow/models/blob/master/research/object_detection/protos/preprocessor.proto). And [this file](https://github.com/tensorflow/models/blob/master/research/object_detection/builders/preprocessor_builder_test.py) also explains how to write them into the config file. 
+Thus, we focus on the Input Preprocessing part of the config file. All this preprocessing is included in the `data_augmentation_options` tag of the `train_config`. This data_augmentation_options can take several values that are listed [here](https://github.com/tensorflow/models/blob/master/research/object_detection/protos/preprocessor.proto). [This file](https://github.com/tensorflow/models/blob/master/research/object_detection/builders/preprocessor_builder_test.py) also explains how to write them into the config file. 
 
 Concerning the image size, most of the object detection model contains an  [image-resize layer](https://www.tensorflow.org/api_docs/python/tf/keras/layers/Resizing) which resizes the input to the required size. Thus, the images are automatically resized to the desired input size when feeded to the network. 
 
@@ -88,7 +88,7 @@ Concerning the image size, most of the object detection model contains an  [imag
 
 The pipeline that specify the data augmentation options that will be applied to the images is created in this notebook: [configure_training_pipeline.ipynb](configure_training_pipeline.ipynb).
 
-Data augmentation englobe techniques used to increase the amount of data, by adding to the dataset slightly modified copies of already existing data. Data augmentation helps to reduce overfitting by helping the network to generalize over different examples. This is closely related to oversampling. It is important to note that all the data augmentation options will be applied on the images, before entering the resize layer. Here, we used 3 different methods to augment our data:
+Data augmentation consists of techniques used to increase the amount of data, by adding to the dataset slightly modified copies of already existing data. Data augmentation helps to reduce overfitting by helping the network to generalize over different examples. This is closely related to oversampling. It is important to note that all the data augmentation options will be applied on the images, before entering the resize layer. Here, we used 3 different methods to augment our data:
 
 - **random_scale_crop_and_pad_to_square**: Randomly scale, crop, and then pad the images to fixed square dimensions. The method sample a random_scale factor from a uniform distribution between scale_min and scale_max, and then resizes the image such that its maximum dimension is (output_size * random_scale). Then a square output_size crop is extracted from the resized image. Lastly, the cropped region is padded to the desired square output_size (which is the input size of the network) by filling the empty values with zeros.
 - **random_horizontal_flip**: Randomly flips the image and detections horizontally, with a probability p. Here we chose p=0.3, so the probability that an image is horizontally flipped is 30%.
@@ -127,7 +127,7 @@ In the training configuration file, this will look like this:
 
 ### Configure the training job
 
-To follow this part, we assume you installed the required libraries to train an object detection neural net with the tensorflow 2 object detection API. If not, just follow the instructions [here](https://tensorflow-object-detection-api-tutorial.readthedocs.io/en/latest/install.html). If you don't plan to train the model, you don't need to install these libraries.
+To follow this part, we assume you installed the required libraries to train an object detection neural net with the tensorflow 2 object detection API. If not, follow the instructions [here](https://tensorflow-object-detection-api-tutorial.readthedocs.io/en/latest/install.html). If you don't plan to train the model, you don't need to install these libraries.
 
 #### The training workspace
 
@@ -226,7 +226,7 @@ unzip efficientdet_d1_v1.zip
 rm efficientdet_d1_v1.zip
 ```
 
-You know have access to the result of the training phase.
+You now have access to the result of the training phase.
 <!-- #endregion -->
 
 #### Monitor the training job using Tensorboard
@@ -326,13 +326,13 @@ python tensorflow-scripts/exporter_main_v2.py --input_type image_tensor --pipeli
 ```
 Now, we can use this model to perform inference.
 
-If you want to download the exported model, you can do it that way:
+If you want to download the exported model, you can do it this way:
 
 - Download the my_model folder :
 ```
 wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1BWaKL_VMOQ89Nuw5NEdRUv4Jl6GP6trC' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1BWaKL_VMOQ89Nuw5NEdRUv4Jl6GP6trC" -O my_model.zip && rm -rf /tmp/cookies.txt
 ```
-It can also be download manually [here](https://drive.google.com/file/d/1BWaKL_VMOQ89Nuw5NEdRUv4Jl6GP6trC/view?usp=sharing).
+It can also be downloaded manually [here](https://drive.google.com/file/d/1BWaKL_VMOQ89Nuw5NEdRUv4Jl6GP6trC/view?usp=sharing).
 
 - Unzip, delete the zip file, and move the exported model at its proper place :
 ```
@@ -351,9 +351,6 @@ We came across issues with tensorflow and package versioning issues which affect
 
 To tackle this issue, we have added a dashboard on our github repository that allows us to play and test different images under different backgrounds. This involves uploading an image taken and it returns bounding boxes to the bicyclists based on the prediction threshold we choose. This was created using the Hugging Face Spaces which we talk about in the next section.
 
-In our attempt to make inference run locally on our computers we decided to use Video2Inference.py and Imageinference.py to convert video input to independent images based on the fps value we had chosen. These images then go to the ImageInference.py file to form bounding boxes. If he had more time we would convert these images back to a video and make it seem like an animation. We used Google Colab to make it work.
-
-
 #### Inference in Hugging Face Spaces
 
 We created a hugging face space in order to allow everyone play, and see the results of our object detection model. This demo works thanks to the library gradio. You can access it on that link: [cyclists-detection](https://huggingface.co/spaces/clement-w/cyclists-detection). You can upload images by URL, or from your computer. The gradio demo can also be accessed [here](https://clement-w.github.io/cyclists-counter/).
@@ -364,8 +361,8 @@ We created a hugging face space in order to allow everyone play, and see the res
 We also trained a second model on the same data set. We chose to use the SSD MobileNet v2 320x320 which can be found [here](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md). This model consists of alternating layers of standard convolutional layers and depthwise convolutional layers. This is repeated several times until the size of the image is sufficiently small (less than 10 pixels) before it is sent through an average global pooling layer, flowed by a fully connected layer, and finally a softmax layer for classification.
 
 Tihs model was trained using the same data augmentation and training parameters as the first model except for the following changes:
--In pipeline.config, copy all the previously made changes and change fine_tune_checkpoint to ```pre-trained-models/ssd_mobilenet_v2_320x320_coco17_tpu-8/checkpoint/ckpt-0``` 
--When running the commands for evaluation, training, and monitoring change the folder directory to ```ssd_mobilenet_v2_320x320_coco17_tpu-8``` instead of ```efficientdet_d1_v1_test```.
+- In pipeline.config, copy all the previously made changes and change fine_tune_checkpoint to ```pre-trained-models/ssd_mobilenet_v2_320x320_coco17_tpu-8/checkpoint/ckpt-0``` 
+- When running the commands for evaluation, training, and monitoring change the folder directory to ```ssd_mobilenet_v2_320x320_coco17_tpu-8``` instead of ```efficientdet_d1_v1_test```.
 After these changes the process is identical to the one used for the main model.
 
 # Results
@@ -702,6 +699,8 @@ Contributions:
 - Trained the second model (code)
 - Evaluated the models (code)
 - Export of the main model (code)
+- Comparison with the second model (write up)
+- Training and evaluation of the second mode (write up)
 
 #### Sohan Patil : Inference Set up, Jetson Nanoer
 
