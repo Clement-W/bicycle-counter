@@ -7,14 +7,16 @@ Clément Weinreich - Timothy Blanton - Sohan Patil - Dave Ru Han Wang
 
 # Introduction
 
-The goal of our project is to address the problem of adapting infrastructure to cyclist flows. In general, it is difficult to estimate the number of bicycle parking spaces needed for different areas and buildings. We therefore want to create an automatic detector and counter of cyclists, working on a Jetson Nano. Once our project is completed, it would be possible to capture data about the flow of cyclists at different locations, and use this data to make predictions or estimates of cyclist flows. A good predictive model would allow cities or universities to better adapt their infrastructure to the needs of cyclists. For a bicycle-first campus like UC Davis, knowing the flux of cyclists according to different areas on campus is very important for the safety of the students. To complete this project, we used transfer-learning on the pre-trained object detection model [EfficientDet-D1](https://arxiv.org/abs/1911.09070). The main model has been trained for 2 days on an NVIDIA 3060TI which led to a very efficient model in various situations. The images used to train the model come from the [Cyclist Dataset for Object Recognition](https://www.kaggle.com/datasets/semiemptyglass/cyclist-dataset) published by [1] in 2016. **REMOVE IF NOT: Then, we implemented an algorithmic-based tracking system that allow us to count the number of cyclists detected on a video flux.**
+Generally, it is difficult to estimate the number of bicycle parking spaces for different areas. Our project addresses cyclist flows. We wanted to create an automatic detector for cyclists (and in addition, if possible, a counter), with the help of a Jetson Nano. With our project, it would be possible make predictions or estimates of cyclist flow by capturing the flow of cyclists at different locations. A predictive model would allow cities and universities to better adapt their infrastructure to the needs of cyclists. 
 
-To test our model, you can send your images or urls to the gradio demo accessible [here](https://clement-w.github.io/cyclists-counter/). This demo is also available in [Hugging Face Spaces](https://huggingface.co/spaces/clement-w/cyclists-detection).
+To complete this project, we used transfer-learning on a pre-trained object detection model [EfficientDet-D1](https://arxiv.org/abs/1911.09070). The main model was trained for 2 days on an NVIDIA 3060TI, leading to a very efficient model. The images training data come from the [Cyclist Dataset for Object Recognition](https://www.kaggle.com/datasets/semiemptyglass/cyclist-dataset) published by [1] in 2016. **REMOVE IF NOT: Then, we implemented an algorithmic-based tracking system that allow us to count the number of cyclists detected on a video flux.**
+
+To test our model, we filmed a quick 30 second video on campus and ran inference on it. More about that later. If you would like to try, you may send your images or urls to the gradio demo accessible [here](https://clement-w.github.io/cyclists-counter/). This demo is also available in [Hugging Face Spaces](https://huggingface.co/spaces/clement-w/cyclists-detection).
 
 
 # Methods
 
-All the work that have been done for this project is reproductible. To download our dataset and install the required softwares and libraries, you can follow the instructions in [Setup-requirements](#Setup-requirements).
+All work done for this project is reproductible. To download our dataset and install the required softwares and libraries, you can follow the instructions in [Setup-requirements](#Setup-requirements).
 
 <!-- #region -->
 ## Data Exploration
@@ -28,6 +30,7 @@ The data exploration step is split into 2 notebooks:
 ###  [Adapt Dataset notebook](adapt_dataset.ipynb)
 
 The original dataset used is the ([Cyclist Dataset for Object Recognition](https://www.kaggle.com/datasets/semiemptyglass/cyclist-dataset)), recorded from a moving vehicle in the urban traffic of Beijing.
+
 This first notebook contains the steps to adapt the original dataset, and make it usable for our project. This dataset contains 13674 images, and the labels consist of .txt files containing the class id followed by the coordinates : `id center_x center_y width height`. Thus, deleted the non-labeled images along with their empty label file. Thanks to the python library `pylabel`, we loaded the dataset into an object  This library was useful in particular to convert the label format from Yolov5 (.txt) to VOC XML (the required label format of tensorflow object detection API). After converting the lables, we removed the `.txt` labels and keept the new `.xml` labels. Then, we used a script from the tensorflow object detection API to split our dataset into 3 sets : 
 
 - 90% for the train set (9760 images)
@@ -576,11 +579,11 @@ Regarding the dataset we used, it is also very questionable to split the dataset
 
 As the images have a width of 2048 and a height of 1024, it was not feasable for us to train a neural network with these dimensions. But thanks to the resize layer of the object detection models we used, we are able to feed any input size to the network. 
 
-Finally, all the data preprocessing that have been performed on the adapted dataset only consists of data augmentation:
+Finally, all data preprocessing performed on the adapted dataset only consists of data augmentation:
 
-- We choosed to use the random scale,crop and pad to square data augmentation option because during the data exploration phase, we noticed that most of the cyclists were in the center of the image. Thus, to give different examples to the model, this data augmentation option will create other images where the cyclists won't be in the center of the image.
+- Random scaling, cropping and padding to square data augmentation option because during the data exploration phase, we noticed that most of the cyclists were in the center of the image. Thus, to give different examples to the model, this data augmentation option will create other images where the cyclists won't be in the center of the image.
 
-- We choosed to use the horizontal_flip data augmentation option because this will create more examples to train the network. As the cyclists can come from the left,right or front of the camera, this data augmentation option will help the network to see diverse cases of cyclist positions.
+- Horizontally flipping to create more examples to train the network for a diverse set of positions of cyclists from left, right, or front of the camera.
 
 - We choosed to use the random_distort_color data augmentation option because during the data exploration phase, we noticed that the luminosity of the images are low, with a low contrast and a low saturation. Thus, this data augmentation option will help the network to see other examples with a different brightness, contrast, saturation and hue.
 
@@ -589,7 +592,7 @@ Finally, all the data preprocessing that have been performed on the adapted data
 
 ### Choice of pre-trained model
 
-Today, it is EfficientNet based models (EfficientDet) that provide the best overall performances, and can work well for low latency applications. For example, `EfficientDet D1 640x640` can perform inference in 54ms on a nvidia-tesla-v100GPU, and obtain a COCO mAP of 38.4. As we aim to work on a live application on the jetson nano, this pre-trained model offers the best compromise between inference time and performances.
+Today, EfficientNet based models (EfficientDet) provide best overall performance while preserving efficiency for low latency applications. For example, `EfficientDet D1 640x640` can perform inference in 54ms on a nvidia-tesla-v100GPU, and obtain a COCO mAP of 38.4. As we aim to work on a live application on the jetson nano, this pre-trained model offers the best compromise between inference time and performances.
 
 
 ### Configuration of the training
@@ -667,7 +670,9 @@ Overall the first model exhibits much better performace compared to the second m
 
 # Conclusion
 
-To conclude, we trained a custom cyclist detector model, which offers very good performances in various situations. It would have been interesting to re-train the model to see if the performances would have still increased, or if overfitting would have happened. As discussed previously, our evaluation of the model is biased because of memory leakage between the 3 sets. But testing the model manually with the gradio demo and images originating from different soures on the internet has shown very good results. To counteract the memory-leakage issue, we could have use the whole dataset for training, and find another dataset to constitute the validation and the test set. This would ensure that the data comes from different sources, which would lead to more reliable evaluation results. Our attempt to test it on the Jetson Nano did not help us test our model in action. Due to technical issues and lack of adequate resources (camera, bicyclists on road due to rain) we had to find alternatives for testing our model. Based on the inference we did using Hugging Space, we are confident our model works well with images of cyclists.
+To conclude, we trained a custom cyclist detector model, which offers very good performances in various scenerios. It would have been interesting to re-train the model to see if the performances would have still improved, or if overfitting would happen. As noted, our evaluation of the model is biased because of memory leakage between the 3 sets. But testing the model manually with the gradio demo and images originating from different soures on both the internet and the self-filmed video has shown promising results.
+
+To counteract the memory-leakage issue, we could have use the whole dataset for training, and find another dataset to constitute the validation and the test set. This would ensure that the data comes from different sources, which would lead to more reliable evaluation results. Our attempt to test it on the Jetson Nano did not help us test our model in action. Due to technical issues and lack of adequate resources (camera, bicyclists on road due to rain) we had to find alternatives for testing our model. Based on the inference we did using Hugging Space, we are confident our model works well with images of cyclists.
 
 <!-- #region -->
 # Collaboration
@@ -692,17 +697,19 @@ Contributions:
 - Trained the second model (code)
 - Evaluated the models (code)
 - Export of the main model (code)
-- TODO ADD THINGS
 
-
-#### Sohan Patil : Inference Set up
+#### Sohan Patil : Inference Set up, Jetson Nanoer
 
 Contributions:
 - Setup of the jetson nano (code)
 - Counting Algorithm (research + write up)
 - Video Processing (research + code)
 
-#### Dave Ru Han Wang : Coder? Counter?
+#### Dave (Ru Han) Wang : Data Explorer, Video Frame ALgorithm Writer, Inference Set Up
+- Writup of Data Exploration ipynb file (code) 
+- Video Processing (code + write up)
+- Counting Algorithm (code + write up [editing])
+- README file (editing) 
 
 Contributions:
 - Data exploration (code)
@@ -739,10 +746,11 @@ rm images.zip
 Now you're all set!
 
 
-
 ## Counting algorithm
 
-The counting algorithm is essential for counting number of unique bounding boxes at any given time on the screen. This includes identifying the object and tracking till the object being tracked leaves the screen. Our approach for tracking was to calculate the centroid of each bounding box and to follow the centroid as it goes. For every pair of centroids, we calculate the euclidean distance between the two points. If the points are too close to each other we assume they are from the same bounding box or object ID. If the distance is high we assume it's a new bounding box and a new item has been detected. For each tracked centroid, we assign an object ID so we are aware of which bounding box has which ID. This allows us to know if the object has already been tracked or is currently being tracked. We keep track of direction and once the centroid leaves the screen, we consider that object as 1 count. 
+The counting algorithm is essential for counting number of unique bounding boxes at any given time on the screen. 
+
+This includes identifying the object and tracking till the object being tracked leaves the screen. Our approach for tracking was to calculate the centroid of each bounding box and to follow the centroid as it goes. For every pair of centroids, we calculate the euclidean distance between the two points. If the points are too close to each other we assume they are from the same bounding box or object ID. If the distance is high we assume it's a new bounding box and a new item has been detected. For each tracked centroid, we assign an object ID so we are aware of which bounding box has which ID. This allows us to know if the object has already been tracked or is currently being tracked. We keep track of direction and once the centroid leaves the screen, we consider that object as 1 count. 
 We apply the same algorithm for all the points that appear on the screen.
 Due to technical issues with the Jetson Nano, we were not able to test the counting algorithm to see how it works.
 
