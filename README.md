@@ -544,7 +544,14 @@ Here are 3 of the performance metrics obtained on the 3 sets:
 
 ### Results on a video flux
 
-We were able to get a video input and divide it into multiple frames. To limit the number of input images, we chose a low frame rate and we made artifical counters so we only save 1 image every 10 frames.
+We were able to get a video input and divide it into multiple frames. To limit the number of input images, we chose a low frame rate and we made artifical counters so we only save 1 image every 10 frames. Here are some partial results with the video on campus:
+
+| <img src="markdown-images/campus1.png" alt="campus 1" /> 	| <img src="markdown-images/campus2.png" alt="campus 2" /> 	|
+|-------------------------------------------------------------------------------	|-------------------------------------------------------------------------------	|
+
+<br/>
+<div style='text-align:center'> <b>Figure 9</b>: Partial results of inference on the video took on campus</div>
+
 
 ### Results on the Jetson Nano
 We were not able to run the jetson nano due to lack of bicylists and issues with its set up.
