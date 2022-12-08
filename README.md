@@ -72,7 +72,7 @@ This notebook contains all the work done to explore the dataset. In this noteboo
 
 Now that the dataset has been prepared to be compatible with our project, and that we explored it a little bit more, we can focus at the data preprocessing we will setup in order to use the data during training.
 
-The Tensorflow 2 Object Detection API allows to do data preprocessing and data augmentation in the training pipeline configuration. As stated in their [docs](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/configuring_jobs.md#configuring-the-trainer), all the preprocessing of the input is done in the `train_config` part of the training configuration file. The training configuration file is explained in the section [Configure the training pipeline](#TODODODODOOODODODODODOO) of this README.md. 
+The Tensorflow 2 Object Detection API allows to do data preprocessing and data augmentation in the training pipeline configuration. As stated in their [docs](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/configuring_jobs.md#configuring-the-trainer), all the preprocessing of the input is done in the `train_config` part of the training configuration file. The training configuration file is explained in the section [Configure the training pipeline](#Configure-the-training-pipeline-(configure_training_pipeline.ipynb)) of this README.md. 
 
 So here, the important part of the configuration file is `train_config` which parametrize:
 
@@ -231,7 +231,7 @@ You know have access to the result of the training phase.
 
 #### Monitor the training job using Tensorboard
 
-To monitor how the training is going, a popular tool is [tensorboard](https://www.tensorflow.org/tensorboard). This tool is automatically installed with tensorflow. In case you just want tensorboard, you can still install it manually with `pip install tensorboard`. We will go over the details of the training in the next section [TODODODODODAnalysis of the training phase](#analysis-of-the-training-phase). We uploaded our instance of tensorboard, so you can access it on [that link](https://tensorboard.dev/experiment/LMZdMvMxTwGcZ0ypzM7WGg/). Unfortunately, we can only publish the time series graphs, so you will not be able to see the image examples. But having that link open while reading the [Results section](#Results), can help you to better understand the graphs, in particular by changing the smoothing cursor.
+To monitor how the training is going, a popular tool is [tensorboard](https://www.tensorflow.org/tensorboard). This tool is automatically installed with tensorflow. In case you just want tensorboard, you can still install it manually with `pip install tensorboard`. We will go over the details of the training in the next sections. We uploaded our instance of tensorboard, so you can access it on [that link](https://tensorboard.dev/experiment/LMZdMvMxTwGcZ0ypzM7WGg/). Unfortunately, we can only publish the time series graphs, so you will not be able to see the image examples. But having that link open while reading the [Results section](#Results), can help you to better understand the graphs, in particular by changing the smoothing cursor.
 
 If you have downloaded the whole efficientdet_d1_v1 directory, (see [Launch training and periodic evaluation](#Launch-training-and-periodic-evaluation)), then you can open tensorboard in our model directory with this command:
 ```
@@ -748,7 +748,7 @@ Now you're all set!
 
 ## Counting algorithm
 
-The counting algorithm is essential for counting number of unique bounding boxes at any given time on the screen. 
+The counting algorithm is essential for counting number of unique bounding boxes at any given time on the screen. The algorithm used comes from this article: https://pyimagesearch.com/2018/07/23/simple-object-tracking-with-opencv/.
 
 This includes identifying the object and tracking till the object being tracked leaves the screen. Our approach for tracking was to calculate the centroid of each bounding box and to follow the centroid as it goes. For every pair of centroids, we calculate the euclidean distance between the two points. If the points are too close to each other we assume they are from the same bounding box or object ID. 
 
