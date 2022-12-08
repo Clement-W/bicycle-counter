@@ -667,7 +667,7 @@ Overall the first model exhibits much better performace compared to the second m
 
 # Conclusion
 
-To conclude, we trained a custom cyclist detector model, which offers very good performances in various situations. It would have been interesting to re-train the model to see if the performances would have still increased, or if overfitting would have happened. As discussed previously, our evaluation of the model is biased because of memory leakage between the 3 sets. But testing the model manually with the gradio demo and images originating from different soures on the internet has shown very good results. To counteract the memory-leakage issue, we could have use the whole dataset for training, and find another dataset to constitute the validation and the test set. This would ensure that the data comes from different sources, which would lead to more reliable evaluation results. **TODO Continue with results of counting and jetson nano / or say that we did not have time for this**
+To conclude, we trained a custom cyclist detector model, which offers very good performances in various situations. It would have been interesting to re-train the model to see if the performances would have still increased, or if overfitting would have happened. As discussed previously, our evaluation of the model is biased because of memory leakage between the 3 sets. But testing the model manually with the gradio demo and images originating from different soures on the internet has shown very good results. To counteract the memory-leakage issue, we could have use the whole dataset for training, and find another dataset to constitute the validation and the test set. This would ensure that the data comes from different sources, which would lead to more reliable evaluation results. Our attempt to test it on the Jetson Nano did not help us test our model in action. Due to technical issues and lack of adequate resources (camera, bicyclists on road due to rain) we had to find alternatives for testing our model. Based on the inference we did using Hugging Space, we are confident our model works well with images of cyclists.
 
 <!-- #region -->
 # Collaboration
@@ -698,8 +698,9 @@ Contributions:
 #### Sohan Patil : Inference Set up
 
 Contributions:
-- Setup of the jetson nano
-- Video Processing (code)
+- Setup of the jetson nano (code)
+- Counting Algorithm (research + write up)
+- Video Processing (research + code)
 
 #### Dave Ru Han Wang : Coder? Counter?
 
@@ -741,7 +742,9 @@ Now you're all set!
 
 ## Counting algorithm
 
-TODO: describe the method (not the results)
+The counting algorithm is essential for counting number of unique bounding boxes at any given time on the screen. This includes identifying the object and tracking till the object being tracked leaves the screen. Our approach for tracking was to calculate the centroid of each bounding box and to follow the centroid as it goes. For every pair of centroids, we calculate the euclidean distance between the two points. If the points are too close to each other we assume they are from the same bounding box or object ID. If the distance is high we assume it's a new bounding box and a new item has been detected. For each tracked centroid, we assign an object ID so we are aware of which bounding box has which ID. This allows us to know if the object has already been tracked or is currently being tracked. We keep track of direction and once the centroid leaves the screen, we consider that object as 1 count. 
+We apply the same algorithm for all the points that appear on the screen.
+Due to technical issues with the Jetson Nano, we were not able to test the counting algorithm to see how it works.
 
 
 # References
