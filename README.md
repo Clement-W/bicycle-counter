@@ -7,11 +7,11 @@ Clément Weinreich - Timothy Blanton - Sohan Patil - Dave Ru Han Wang
 
 # Introduction
 
-Generally, it is difficult to estimate the number of bicycle parking spaces for different areas. Our project addresses cyclist flows. We wanted to create an automatic detector for cyclists (and in addition, if possible, a counter), with the help of a Jetson Nano. With our project, it would be possible make predictions or estimates of cyclist flow by capturing the flow of cyclists at different locations. A predictive model would allow cities and universities to better adapt their infrastructure to the needs of cyclists. 
+Generally, it is difficult to estimate the number of bicycle parking spaces for different areas. Our project addresses cyclist flows. We wanted to create an automatic detector for cyclists (and in addition, if possible, a counter), with the help of a Jetson Nano. With our project, it would be possible make predictions or estimates of cyclist flow by capturing the flow of cyclists at different locations. A predictive model would allow cities and universities to better adapt their infrastructure to the needs of cyclists. For a bicycle-first campus like UC Davis, knowing the flux of cyclists according to different areas on campus is very important for the safety of the students.
 
-To complete this project, we used transfer-learning on a pre-trained object detection model [EfficientDet-D1](https://arxiv.org/abs/1911.09070). The main model was trained for 2 days on an NVIDIA 3060TI, leading to a very efficient model. The images training data come from the [Cyclist Dataset for Object Recognition](https://www.kaggle.com/datasets/semiemptyglass/cyclist-dataset) published by [1] in 2016. **REMOVE IF NOT: Then, we implemented an algorithmic-based tracking system that allow us to count the number of cyclists detected on a video flux.**
+To complete this project, we used transfer-learning on a pre-trained object detection model [EfficientDet-D1](https://arxiv.org/abs/1911.09070). The main model was trained for 2 days on an NVIDIA 3060TI, leading to a very efficient model. The images training data come from the [Cyclist Dataset for Object Recognition](https://www.kaggle.com/datasets/semiemptyglass/cyclist-dataset) published by [1] in 2016. Then, an algorithmic-based tracking system that allow to count the number of cyclists was developed, but could not be teminated due to lack of time
 
-To test our model, we filmed a quick 30 second video on campus and ran inference on it. More about that later. If you would like to try, you may send your images or urls to the gradio demo accessible [here](https://clement-w.github.io/cyclists-counter/). This demo is also available in [Hugging Face Spaces](https://huggingface.co/spaces/clement-w/cyclists-detection).
+To test real-world inference with our model, we filmed a quick 30 second video on campus and ran inference on it. If you would like to try, you may send your images or urls to the gradio demo accessible [here](https://clement-w.github.io/cyclists-counter/). This demo is also available in [Hugging Face Spaces](https://huggingface.co/spaces/clement-w/cyclists-detection).
 
 
 # Methods
@@ -538,12 +538,6 @@ Here are 3 of the performance metrics obtained on the 3 sets:
 <!-- #region -->
 ## Inference with the main model
 
-### Inference in the hugging face space
-
-Here are some of the results we had when running our model in the hugging face space:
-
-TODO
-
 
 ### Results on a video flux
 
@@ -551,7 +545,6 @@ We were able to get a video input and divide it into multiple frames. To limit t
 
 ### Results on the Jetson Nano
 We were not able to run the jetson nano due to lack of bicylists and issues with its set up.
-
 
 <!-- #endregion -->
 
@@ -683,7 +676,7 @@ To conclude, we trained a custom cyclist detector model, which offers very good 
 
 To counteract the memory-leakage issue, we could have use the whole dataset for training, and find another dataset to constitute the validation and the test set. This would ensure that the data comes from different sources, which would lead to more reliable evaluation results. Our attempt to test it on the Jetson Nano did not help us test our model in action. Due to technical issues and lack of adequate resources (camera, bicyclists on road due to rain) we had to find alternatives for testing our model. Based on the inference we did using Hugging Space, we are confident our model works well with images of cyclists.
 
-<!-- #region -->
+
 # Collaboration
 
 #### Clément Weinreich : Project Leader
@@ -715,15 +708,13 @@ Contributions:
 - Video Processing (research + code)
 
 #### Dave (Ru Han) Wang : Data Explorer, Video Frame ALgorithm Writer, Inference Set Up
+
+Contributions:
 - Writup of Data Exploration ipynb file (code) 
 - Video Processing (code + write up)
 - Counting Algorithm (code + write up [editing])
 - README file (editing) 
 
-Contributions:
-- Data exploration (code)
-- TODO ADD THINGS
-<!-- #endregion -->
 
 # Extra-information
 
