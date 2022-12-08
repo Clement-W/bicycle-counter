@@ -544,7 +544,7 @@ TODO
 
 ### Results on a video flux
 
-TODO
+We were able to get a video input and divide it into multiple frames. To limit the number of input images, we chose a low frame rate and we made artifical counters so we only save 1 image every 10 frames.
 
 ### Results on the Jetson Nano
 We were not able to run the jetson nano due to lack of bicylists and issues with its set up.
